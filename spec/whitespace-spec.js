@@ -8,31 +8,31 @@ describe("Whitespace", () => {
 
   beforeEach(async () => {
     const directory = temp.mkdirSync();
-    atom.project.setPaths([directory]);
-    workspaceElement = atom.views.getView(atom.workspace);
-    const filePath = path.join(directory, "atom-whitespace.txt");
+    lumine.project.setPaths([directory]);
+    workspaceElement = lumine.views.getView(lumine.workspace);
+    const filePath = path.join(directory, "lumine-whitespace.txt");
     fs.writeFileSync(filePath, "");
     fs.writeFileSync(path.join(directory, "sample.txt"), "Some text.\n");
 
-    editor = await atom.workspace.open(filePath);
+    editor = await lumine.workspace.open(filePath);
     buffer = editor.getBuffer();
-    await atom.packages.activatePackage("whitespace");
+    await lumine.packages.activatePackage("whitespace");
   });
 
   describe("when the editor is destroyed", () => {
     beforeEach(() => editor.destroy());
 
     it("does not leak subscriptions", async () => {
-      const { whitespace } = atom.packages.getActivePackage("whitespace").mainModule;
+      const { whitespace } = lumine.packages.getActivePackage("whitespace").mainModule;
       expect(whitespace.subscriptions.disposables.size).toBe(2);
 
-      await atom.packages.deactivatePackage("whitespace");
+      await lumine.packages.deactivatePackage("whitespace");
       expect(whitespace.subscriptions.disposables).toBeNull();
     });
   });
 
   describe("when 'whitespace.removeTrailingWhitespace' is true", () => {
-    beforeEach(() => atom.config.set("whitespace.removeTrailingWhitespace", true));
+    beforeEach(() => lumine.config.set("whitespace.removeTrailingWhitespace", true));
 
     it("strips trailing whitespace before an editor saves a buffer", async () => {
       // works for buffers that are already open when package is initialized
@@ -40,7 +40,7 @@ describe("Whitespace", () => {
       await editor.save();
       expect(editor.getText()).toBe("foo\nbar\n\nbaz\n");
 
-      editor = await atom.workspace.open("sample.txt");
+      editor = await lumine.workspace.open("sample.txt");
 
       editor.moveToEndOfLine();
       editor.insertText("           ");
@@ -84,7 +84,7 @@ describe("Whitespace", () => {
   });
 
   describe("when 'whitespace.removeTrailingWhitespace' is false", () => {
-    beforeEach(() => atom.config.set("whitespace.removeTrailingWhitespace", false));
+    beforeEach(() => lumine.config.set("whitespace.removeTrailingWhitespace", false));
 
     it("does not trim trailing whitespace", async () => {
       editor.insertText("don't trim me \n\n");
@@ -94,8 +94,8 @@ describe("Whitespace", () => {
 
     describe("when the setting is set scoped to the grammar", () => {
       beforeEach(() => {
-        atom.config.set("whitespace.removeTrailingWhitespace", true);
-        atom.config.set("whitespace.removeTrailingWhitespace", false, {
+        lumine.config.set("whitespace.removeTrailingWhitespace", true);
+        lumine.config.set("whitespace.removeTrailingWhitespace", false, {
           scopeSelector: ".text.plain",
         });
       });
@@ -109,7 +109,7 @@ describe("Whitespace", () => {
   });
 
   describe("when 'whitespace.ignoreWhitespaceOnCurrentLine' is true", () => {
-    beforeEach(() => atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", true));
+    beforeEach(() => lumine.config.set("whitespace.ignoreWhitespaceOnCurrentLine", true));
 
     describe("respects multiple cursors", () => {
       it("removes the whitespace from all lines, excluding the current lines", async () => {
@@ -124,8 +124,8 @@ describe("Whitespace", () => {
     describe("when buffer is opened in multiple editors", () => {
       let editor2;
       beforeEach(async () => {
-        editor2 = atom.workspace.buildTextEditor({ buffer: editor.buffer });
-        await atom.workspace.open(editor2);
+        editor2 = lumine.workspace.buildTextEditor({ buffer: editor.buffer });
+        await lumine.workspace.open(editor2);
       });
 
       it("[editor is activeEditor] remove WS with excluding active editor's cursor line", async () => {
@@ -133,8 +133,8 @@ describe("Whitespace", () => {
         editor.setCursorBufferPosition([1, 3]);
         editor2.setCursorBufferPosition([2, 3]);
 
-        atom.workspace.getActivePane().activateItem(editor);
-        expect(atom.workspace.getActiveTextEditor()).toBe(editor);
+        lumine.workspace.getActivePane().activateItem(editor);
+        expect(lumine.workspace.getActiveTextEditor()).toBe(editor);
         await editor.save();
         expect(editor.getText()).toBe("1\n2  \n3\n");
       });
@@ -144,8 +144,8 @@ describe("Whitespace", () => {
         editor.setCursorBufferPosition([1, 3]);
         editor2.setCursorBufferPosition([2, 3]);
 
-        atom.workspace.getActivePane().activateItem(editor2);
-        expect(atom.workspace.getActiveTextEditor()).toBe(editor2);
+        lumine.workspace.getActivePane().activateItem(editor2);
+        expect(lumine.workspace.getActiveTextEditor()).toBe(editor2);
         await editor2.save();
         expect(editor.getText()).toBe("1\n2\n3  \n");
       });
@@ -155,8 +155,8 @@ describe("Whitespace", () => {
         editor.setCursorBufferPosition([1, 3]);
         editor2.setCursorBufferPosition([1, 3]);
 
-        const editor3 = await atom.workspace.open();
-        expect(atom.workspace.getActiveTextEditor()).toBe(editor3);
+        const editor3 = await lumine.workspace.open();
+        expect(lumine.workspace.getActiveTextEditor()).toBe(editor3);
         await editor.save();
         expect(editor.getText()).toBe("1\n2\n3\n"); // all trainling-WS were removed
       });
@@ -164,7 +164,7 @@ describe("Whitespace", () => {
   });
 
   describe("when 'whitespace.ignoreWhitespaceOnCurrentLine' is false", () => {
-    beforeEach(() => atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false));
+    beforeEach(() => lumine.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false));
 
     it("removes the whitespace from all lines, including the current lines", async () => {
       editor.insertText("1  \n2  \n3  \n");
@@ -176,7 +176,7 @@ describe("Whitespace", () => {
   });
 
   describe("when 'whitespace.ignoreWhitespaceOnlyLines' is false", () => {
-    beforeEach(() => atom.config.set("whitespace.ignoreWhitespaceOnlyLines", false));
+    beforeEach(() => lumine.config.set("whitespace.ignoreWhitespaceOnlyLines", false));
 
     it("removes the whitespace from all lines, including the whitespace-only lines", async () => {
       editor.insertText("1  \n2\t  \n\t \n3\n");
@@ -189,7 +189,7 @@ describe("Whitespace", () => {
   });
 
   describe("when 'whitespace.ignoreWhitespaceOnlyLines' is true", () => {
-    beforeEach(() => atom.config.set("whitespace.ignoreWhitespaceOnlyLines", true));
+    beforeEach(() => lumine.config.set("whitespace.ignoreWhitespaceOnlyLines", true));
 
     it("removes the whitespace from all lines, excluding the whitespace-only lines", async () => {
       editor.insertText("1  \n2\t  \n\t \n3\n");
@@ -202,7 +202,7 @@ describe("Whitespace", () => {
   });
 
   describe("when 'whitespace.ensureSingleTrailingNewline' is true", () => {
-    beforeEach(() => atom.config.set("whitespace.ensureSingleTrailingNewline", true));
+    beforeEach(() => lumine.config.set("whitespace.ensureSingleTrailingNewline", true));
 
     it("adds a trailing newline when there is no trailing newline", async () => {
       editor.insertText("foo");
@@ -254,7 +254,7 @@ describe("Whitespace", () => {
   });
 
   describe("when 'whitespace.ensureSingleTrailingNewline' is false", () => {
-    beforeEach(() => atom.config.set("whitespace.ensureSingleTrailingNewline", false));
+    beforeEach(() => lumine.config.set("whitespace.ensureSingleTrailingNewline", false));
 
     it("does not add trailing newline if ensureSingleTrailingNewline is false", () => {
       editor.insertText("no trailing newline");
@@ -266,13 +266,13 @@ describe("Whitespace", () => {
   describe("GFM whitespace trimming", () => {
     describe("when keepMarkdownLineBreakWhitespace is true", () => {
       beforeEach(() => {
-        atom.config.set("whitespace.removeTrailingWhitespace", true);
-        atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false);
-        atom.config.set("whitespace.keepMarkdownLineBreakWhitespace", true);
+        lumine.config.set("whitespace.removeTrailingWhitespace", true);
+        lumine.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false);
+        lumine.config.set("whitespace.keepMarkdownLineBreakWhitespace", true);
 
-        waitsForPromise(() => atom.packages.activatePackage("language-gfm"));
+        waitsForPromise(() => lumine.packages.activatePackage("language-gfm"));
 
-        runs(() => editor.setGrammar(atom.grammars.grammarForScopeName("source.gfm")));
+        runs(() => editor.setGrammar(lumine.grammars.grammarForScopeName("source.gfm")));
       });
 
       it("trims GFM text with a single space", async () => {
@@ -304,7 +304,7 @@ describe("Whitespace", () => {
       });
 
       it("respects 'whitespace.ignoreWhitespaceOnCurrentLine' setting", async () => {
-        atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", true);
+        lumine.config.set("whitespace.ignoreWhitespaceOnCurrentLine", true);
 
         editor.insertText("foo \nline break!");
         editor.setCursorBufferPosition([0, 4]);
@@ -313,7 +313,7 @@ describe("Whitespace", () => {
       });
 
       it("respects 'whitespace.ignoreWhitespaceOnlyLines' setting", async () => {
-        atom.config.set("whitespace.ignoreWhitespaceOnlyLines", true);
+        lumine.config.set("whitespace.ignoreWhitespaceOnlyLines", true);
 
         editor.insertText("\t \nline break!");
         await editor.save();
@@ -323,12 +323,12 @@ describe("Whitespace", () => {
 
     describe("when keepMarkdownLineBreakWhitespace is false", () => {
       beforeEach(() => {
-        atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false);
-        atom.config.set("whitespace.keepMarkdownLineBreakWhitespace", false);
+        lumine.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false);
+        lumine.config.set("whitespace.keepMarkdownLineBreakWhitespace", false);
 
-        waitsForPromise(() => atom.packages.activatePackage("language-gfm"));
+        waitsForPromise(() => lumine.packages.activatePackage("language-gfm"));
 
-        runs(() => editor.setGrammar(atom.grammars.grammarForScopeName("source.gfm")));
+        runs(() => editor.setGrammar(lumine.grammars.grammarForScopeName("source.gfm")));
       });
 
       it("trims GFM text with a single space", async () => {
@@ -360,7 +360,7 @@ describe("Whitespace", () => {
       });
 
       it("respects 'whitespace.ignoreWhitespaceOnCurrentLine' setting", async () => {
-        atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", true);
+        lumine.config.set("whitespace.ignoreWhitespaceOnCurrentLine", true);
 
         editor.insertText("foo \nline break!");
         editor.setCursorBufferPosition([0, 4]);
@@ -369,7 +369,7 @@ describe("Whitespace", () => {
       });
 
       it("respects 'whitespace.ignoreWhitespaceOnlyLines' setting", async () => {
-        atom.config.set("whitespace.ignoreWhitespaceOnlyLines", true);
+        lumine.config.set("whitespace.ignoreWhitespaceOnlyLines", true);
 
         editor.insertText("\t \nline break!");
         await editor.save();
@@ -380,10 +380,10 @@ describe("Whitespace", () => {
 
   describe("when the editor is split", () =>
     it("does not throw exceptions when the editor is saved after the split is closed (regression)", async () => {
-      atom.workspace.getActivePane().splitRight({ copyActiveItem: true });
-      atom.workspace.getPanes()[0].destroyItems();
+      lumine.workspace.getActivePane().splitRight({ copyActiveItem: true });
+      lumine.workspace.getPanes()[0].destroyItems();
 
-      editor = atom.workspace.getActivePaneItem();
+      editor = lumine.workspace.getActivePaneItem();
       editor.setText("test");
       await editor.save();
       expect(editor.getText()).toBe("test\n");
@@ -391,16 +391,16 @@ describe("Whitespace", () => {
 
   describe("when deactivated", () =>
     it("does not remove trailing whitespace from editors opened after deactivation", async () => {
-      atom.config.set("whitespace.removeTrailingWhitespace", true);
-      await atom.packages.deactivatePackage("whitespace");
+      lumine.config.set("whitespace.removeTrailingWhitespace", true);
+      await lumine.packages.deactivatePackage("whitespace");
 
       editor.setText("foo \n");
       await editor.save();
       expect(editor.getText()).toBe("foo \n");
 
-      await atom.workspace.open("sample2.txt");
+      await lumine.workspace.open("sample2.txt");
 
-      editor = atom.workspace.getActiveTextEditor();
+      editor = lumine.workspace.getActiveTextEditor();
       editor.setText("foo \n");
       await editor.save();
       expect(editor.getText()).toBe("foo \n");
@@ -410,20 +410,20 @@ describe("Whitespace", () => {
     beforeEach(() => buffer.setText("foo   \nbar\t   \n\nbaz"));
 
     it("removes the trailing whitespace in the active editor", () => {
-      atom.commands.dispatch(workspaceElement, "whitespace:remove-trailing-whitespace");
+      lumine.commands.dispatch(workspaceElement, "whitespace:remove-trailing-whitespace");
       expect(buffer.getText()).toBe("foo\nbar\n\nbaz");
     });
 
     it("does not attempt to remove whitespace when the package is deactivated", async () => {
-      await atom.packages.deactivatePackage("whitespace");
+      await lumine.packages.deactivatePackage("whitespace");
       expect(buffer.getText()).toBe("foo   \nbar\t   \n\nbaz");
     });
   });
 
   describe("when the 'whitespace:save-with-trailing-whitespace' command is run", () => {
     beforeEach(() => {
-      atom.config.set("whitespace.removeTrailingWhitespace", true);
-      atom.config.set("whitespace.ensureSingleTrailingNewline", false);
+      lumine.config.set("whitespace.removeTrailingWhitespace", true);
+      lumine.config.set("whitespace.ensureSingleTrailingNewline", false);
       buffer.setText("foo   \nbar\t   \n\nbaz");
     });
 
@@ -434,14 +434,14 @@ describe("Whitespace", () => {
           expect(buffer.isModified()).toBe(false);
           done();
         });
-        atom.commands.dispatch(workspaceElement, "whitespace:save-with-trailing-whitespace");
+        lumine.commands.dispatch(workspaceElement, "whitespace:save-with-trailing-whitespace");
       }));
   });
 
   describe("when the 'whitespace:save-without-trailing-whitespace' command is run", () => {
     beforeEach(() => {
-      atom.config.set("whitespace.removeTrailingWhitespace", false);
-      atom.config.set("whitespace.ensureSingleTrailingNewline", false);
+      lumine.config.set("whitespace.removeTrailingWhitespace", false);
+      lumine.config.set("whitespace.ensureSingleTrailingNewline", false);
       buffer.setText("foo   \nbar\t   \n\nbaz");
     });
 
@@ -452,7 +452,7 @@ describe("Whitespace", () => {
           expect(buffer.isModified()).toBe(false);
           done();
         });
-        atom.commands.dispatch(workspaceElement, "whitespace:save-without-trailing-whitespace");
+        lumine.commands.dispatch(workspaceElement, "whitespace:save-without-trailing-whitespace");
       }));
   });
 
@@ -460,17 +460,17 @@ describe("Whitespace", () => {
     it("removes leading \\t characters and replaces them with spaces using the configured tab length", () => {
       editor.setTabLength(2);
       buffer.setText("\ta\n\t\nb\t\nc\t\td");
-      atom.commands.dispatch(workspaceElement, "whitespace:convert-tabs-to-spaces");
+      lumine.commands.dispatch(workspaceElement, "whitespace:convert-tabs-to-spaces");
       expect(buffer.getText()).toBe("  a\n  \nb\t\nc\t\td");
 
       editor.setTabLength(3);
       buffer.setText("\ta\n\t\nb\t\nc\t\td");
-      atom.commands.dispatch(workspaceElement, "whitespace:convert-tabs-to-spaces");
+      lumine.commands.dispatch(workspaceElement, "whitespace:convert-tabs-to-spaces");
       expect(buffer.getText()).toBe("   a\n   \nb\t\nc\t\td");
     });
 
     it("changes the tab type to soft tabs", () => {
-      atom.commands.dispatch(workspaceElement, "whitespace:convert-tabs-to-spaces");
+      lumine.commands.dispatch(workspaceElement, "whitespace:convert-tabs-to-spaces");
       expect(editor.getSoftTabs()).toBe(true);
     });
   });
@@ -479,31 +479,31 @@ describe("Whitespace", () => {
     it("removes leading space characters and replaces them with hard tabs", () => {
       editor.setTabLength(2);
       buffer.setText("   a\n  \nb  \nc    d");
-      atom.commands.dispatch(workspaceElement, "whitespace:convert-spaces-to-tabs");
+      lumine.commands.dispatch(workspaceElement, "whitespace:convert-spaces-to-tabs");
       expect(buffer.getText()).toBe("\t a\n\t\nb  \nc    d");
 
       editor.setTabLength(3);
       buffer.setText("     a\n   \nb   \nc      d");
-      atom.commands.dispatch(workspaceElement, "whitespace:convert-spaces-to-tabs");
+      lumine.commands.dispatch(workspaceElement, "whitespace:convert-spaces-to-tabs");
       expect(buffer.getText()).toBe("\t  a\n\t\nb   \nc      d");
     });
 
     it("handles mixed runs of tabs and spaces correctly", () => {
       editor.setTabLength(4);
       buffer.setText("     \t    \t\ta   ");
-      atom.commands.dispatch(workspaceElement, "whitespace:convert-spaces-to-tabs");
+      lumine.commands.dispatch(workspaceElement, "whitespace:convert-spaces-to-tabs");
       expect(buffer.getText()).toBe("\t\t\t\t\ta   ");
     });
 
     it("changes the tab type to hard tabs", () => {
-      atom.commands.dispatch(workspaceElement, "whitespace:convert-spaces-to-tabs");
+      lumine.commands.dispatch(workspaceElement, "whitespace:convert-spaces-to-tabs");
       expect(editor.getSoftTabs()).toBe(false);
     });
 
     it("changes the tab length to user's tab-size", () => {
       editor.setTabLength(4);
       buffer.setText("    ");
-      atom.commands.dispatch(workspaceElement, "whitespace:convert-spaces-to-tabs");
+      lumine.commands.dispatch(workspaceElement, "whitespace:convert-spaces-to-tabs");
       expect(editor.getTabLength()).toBe(2);
     });
   });
@@ -512,17 +512,17 @@ describe("Whitespace", () => {
     it("removes all \\t characters and replaces them with spaces using the configured tab length", () => {
       editor.setTabLength(2);
       buffer.setText("\ta\n\t\nb\t\nc\t\td");
-      atom.commands.dispatch(workspaceElement, "whitespace:convert-all-tabs-to-spaces");
+      lumine.commands.dispatch(workspaceElement, "whitespace:convert-all-tabs-to-spaces");
       expect(buffer.getText()).toBe("  a\n  \nb  \nc    d");
 
       editor.setTabLength(3);
       buffer.setText("\ta\n\t\nb\t\nc\t\td");
-      atom.commands.dispatch(workspaceElement, "whitespace:convert-all-tabs-to-spaces");
+      lumine.commands.dispatch(workspaceElement, "whitespace:convert-all-tabs-to-spaces");
       expect(buffer.getText()).toBe("   a\n   \nb   \nc      d");
     });
 
     it("changes the tab type to soft tabs", () => {
-      atom.commands.dispatch(workspaceElement, "whitespace:convert-all-tabs-to-spaces");
+      lumine.commands.dispatch(workspaceElement, "whitespace:convert-all-tabs-to-spaces");
       expect(editor.getSoftTabs()).toBe(true);
     });
   });

@@ -16,7 +16,7 @@ To install `whitespace` search for _whitespace_ in the Install pane of the Lumin
 
 ## Commands
 
-Commands available in `atom-workspace`:
+Commands available in `lumine-workspace`:
 
 - `whitespace:remove-trailing-whitespace`: remove trailing whitespace from the active editor,
 - `whitespace:save-with-trailing-whitespace`: save the editor without stripping trailing whitespace,
