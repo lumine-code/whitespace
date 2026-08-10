@@ -1,7 +1,6 @@
 const path = require("path");
 const fs = require("@lumine-code/fs-plus");
 const temp = require("@lumine-code/temp");
-const { it, fit, ffit, beforeEach } = require("./async-spec-helpers"); // eslint-disable-line
 
 describe("Whitespace", () => {
   let editor, buffer, workspaceElement;
@@ -265,14 +264,14 @@ describe("Whitespace", () => {
 
   describe("GFM whitespace trimming", () => {
     describe("when keepMarkdownLineBreakWhitespace is true", () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         lumine.config.set("whitespace.removeTrailingWhitespace", true);
         lumine.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false);
         lumine.config.set("whitespace.keepMarkdownLineBreakWhitespace", true);
 
-        waitsForPromise(() => lumine.packages.activatePackage("language-gfm"));
+        await lumine.packages.activatePackage("language-gfm");
 
-        runs(() => editor.setGrammar(lumine.grammars.grammarForScopeName("source.gfm")));
+        editor.setGrammar(lumine.grammars.grammarForScopeName("source.gfm"));
       });
 
       it("trims GFM text with a single space", async () => {
@@ -322,13 +321,13 @@ describe("Whitespace", () => {
     });
 
     describe("when keepMarkdownLineBreakWhitespace is false", () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         lumine.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false);
         lumine.config.set("whitespace.keepMarkdownLineBreakWhitespace", false);
 
-        waitsForPromise(() => lumine.packages.activatePackage("language-gfm"));
+        await lumine.packages.activatePackage("language-gfm");
 
-        runs(() => editor.setGrammar(lumine.grammars.grammarForScopeName("source.gfm")));
+        editor.setGrammar(lumine.grammars.grammarForScopeName("source.gfm"));
       });
 
       it("trims GFM text with a single space", async () => {
@@ -427,15 +426,14 @@ describe("Whitespace", () => {
       buffer.setText("foo   \nbar\t   \n\nbaz");
     });
 
-    it("saves the file without removing any trailing whitespace", () =>
-      waitsFor((done) => {
-        buffer.onDidSave(() => {
-          expect(buffer.getText()).toBe("foo   \nbar\t   \n\nbaz");
-          expect(buffer.isModified()).toBe(false);
-          done();
-        });
-        lumine.commands.dispatch(workspaceElement, "whitespace:save-with-trailing-whitespace");
-      }));
+    it("saves the file without removing any trailing whitespace", async () => {
+      const saved = new Promise((resolve) => buffer.onDidSave(resolve));
+      lumine.commands.dispatch(workspaceElement, "whitespace:save-with-trailing-whitespace");
+      await saved;
+
+      expect(buffer.getText()).toBe("foo   \nbar\t   \n\nbaz");
+      expect(buffer.isModified()).toBe(false);
+    });
   });
 
   describe("when the 'whitespace:save-without-trailing-whitespace' command is run", () => {
@@ -445,15 +443,14 @@ describe("Whitespace", () => {
       buffer.setText("foo   \nbar\t   \n\nbaz");
     });
 
-    it("saves the file and removes any trailing whitespace", () =>
-      waitsFor(function (done) {
-        buffer.onDidSave(() => {
-          expect(buffer.getText()).toBe("foo\nbar\n\nbaz");
-          expect(buffer.isModified()).toBe(false);
-          done();
-        });
-        lumine.commands.dispatch(workspaceElement, "whitespace:save-without-trailing-whitespace");
-      }));
+    it("saves the file and removes any trailing whitespace", async () => {
+      const saved = new Promise((resolve) => buffer.onDidSave(resolve));
+      lumine.commands.dispatch(workspaceElement, "whitespace:save-without-trailing-whitespace");
+      await saved;
+
+      expect(buffer.getText()).toBe("foo\nbar\n\nbaz");
+      expect(buffer.isModified()).toBe(false);
+    });
   });
 
   describe("when the 'whitespace:convert-tabs-to-spaces' command is run", () => {
