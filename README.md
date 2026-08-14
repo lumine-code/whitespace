@@ -12,7 +12,7 @@ Strips trailing whitespace and adds a trailing newline when an editor is saved.
 
 ## Installation
 
-To install `whitespace` search for _whitespace_ in the Install pane of the Lumine settings or run `lumine --install lumine-code/whitespace`.
+To install `whitespace` search for it in the Install pane of the Lumine settings, or run the command `lumine --install lumine-code/whitespace`.
 
 ## Commands
 
