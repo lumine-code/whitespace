@@ -432,7 +432,7 @@ describe("Whitespace", () => {
       await saved;
 
       expect(buffer.getText()).toBe("foo   \nbar\t   \n\nbaz");
-      expect(buffer.isModified()).toBe(false);
+      expect(buffer.getFileState()).toBe("unmodified");
     });
   });
 
@@ -449,7 +449,7 @@ describe("Whitespace", () => {
       await saved;
 
       expect(buffer.getText()).toBe("foo\nbar\n\nbaz");
-      expect(buffer.isModified()).toBe(false);
+      expect(buffer.getFileState()).toBe("unmodified");
     });
   });
 
