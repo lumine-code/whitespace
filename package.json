@@ -37,6 +37,7 @@
     "removeTrailingWhitespace": {
       "title": "Remove Trailing Whitespace",
       "description": "Automatically remove whitespace characters at ends of lines when the buffer is saved. To disable/enable for a certain language, use syntax-scoped properties in your `config.json`.",
+      "scopeResolution": "grammar",
       "type": "boolean",
       "scopes": {
         ".source.diff": {
@@ -63,18 +64,21 @@
     "ignoreWhitespaceOnCurrentLine": {
       "title": "Ignore Whitespace On Current Line",
       "description": "Skip removing trailing whitespace on the line which the cursor is positioned on when the buffer is saved. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/lumine-code/lumine/tree/master/packages/whitespace#readme) in your `config.json`.",
+      "scopeResolution": "grammar",
       "type": "boolean",
       "default": true
     },
     "ignoreWhitespaceOnlyLines": {
       "title": "Ignore Whitespace Only Lines",
       "description": "Skip removing trailing whitespace on lines which consist only of whitespace characters. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/lumine-code/lumine/tree/master/packages/whitespace#readme) in your `config.json`.",
+      "scopeResolution": "grammar",
       "type": "boolean",
       "default": false
     },
     "ensureSingleTrailingNewline": {
       "title": "Ensure Single Trailing Newline",
       "description": "If the buffer doesn't end with a newline character when it's saved, then append one. If it ends with more than one newline, remove all but one. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/lumine-code/lumine/tree/master/packages/whitespace#readme) in your `config.json`.",
+      "scopeResolution": "grammar",
       "type": "boolean",
       "default": true
     }
