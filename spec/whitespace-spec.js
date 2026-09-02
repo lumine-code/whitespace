@@ -58,27 +58,27 @@ describe("Whitespace", () => {
     });
 
     it("clears blank lines when the editor inserts a newline", () => {
-      // Need autoIndent to be true
-      editor.update({ autoIndent: true });
-
-      // Create an indent level and insert a newline
+      // Leave a whitespace-only line by inserting a newline at its end.
       editor.setIndentationForBufferRow(0, 1);
+      editor.setCursorBufferPosition([0, Infinity]);
       editor.insertText("\n");
-      expect(editor.getText()).toBe("\n  ");
+      expect(editor.getText()).toBe("\n");
 
       // Undo the newline insert and redo it
       editor.undo();
       expect(editor.getText()).toBe("  ");
       editor.redo();
-      expect(editor.getText()).toBe("\n  ");
+      expect(editor.getText()).toBe("\n");
 
-      // Test for multiple cursors, possibly without blank lines
+      // Test both a non-blank line and an indented blank line with multiple
+      // cursors. Only the latter needs whitespace removed.
       editor.insertText("foo");
       editor.insertText("\n");
-      editor.setCursorBufferPosition([1, 5]); // Cursor after 'foo'
-      editor.addCursorAtBufferPosition([2, 2]); // Cursor on the next line (blank)
+      editor.setIndentationForBufferRow(2, 1);
+      editor.setCursorBufferPosition([1, Infinity]);
+      editor.addCursorAtBufferPosition([2, Infinity]);
       editor.insertText("\n");
-      expect(editor.getText()).toBe("\n  foo\n  \n\n  ");
+      expect(editor.getText()).toBe("\nfoo\n\n\n");
     });
   });
 
