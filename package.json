@@ -24,9 +24,6 @@
   "engines": {
     "lumine": "^1.0.0"
   },
-  "backgroundTips": [
-    "Lumine strips trailing whitespace and adds a final newline on save, and both can be turned off per language."
-  ],
   "scripts": {
     "test": "lumine --test spec",
     "lint": "eslint . --max-warnings 0",
@@ -81,6 +78,13 @@
       "scopeResolution": "grammar",
       "type": "boolean",
       "default": true
+    }
+  },
+  "providedServices": {
+    "background-tips.provider": {
+      "versions": {
+        "1.0.0": "provideBackgroundTips"
+      }
     }
   },
   "devDependencies": {
