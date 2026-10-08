@@ -2,6 +2,8 @@
 
 Strips trailing whitespace and adds a trailing newline when an editor is saved.
 
+Fork of [pulsar-edit/pulsar](https://github.com/pulsar-edit/pulsar) (`packages/whitespace`).
+
 ## Features
 
 - **Trailing whitespace removal**: strips whitespace from the ends of lines on save.
