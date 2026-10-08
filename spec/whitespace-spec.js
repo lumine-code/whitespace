@@ -422,6 +422,7 @@ describe("Whitespace", () => {
   describe("when the 'whitespace:save-with-trailing-whitespace' command is run", () => {
     beforeEach(() => {
       lumine.config.set("whitespace.removeTrailingWhitespace", true);
+      lumine.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false);
       lumine.config.set("whitespace.ensureSingleTrailingNewline", false);
       buffer.setText("foo   \nbar\t   \n\nbaz");
     });
@@ -433,6 +434,54 @@ describe("Whitespace", () => {
 
       expect(buffer.getText()).toBe("foo   \nbar\t   \n\nbaz");
       expect(buffer.getFileState()).toBe("unmodified");
+    });
+
+    it("restores normal trimming after a failed save", async () => {
+      const save = spyOn(editor, "save").and.rejectWith(new Error("Save failed"));
+      await expectAsync(
+        lumine.commands.dispatch(workspaceElement, "whitespace:save-with-trailing-whitespace"),
+      ).toBeRejectedWithError("Save failed");
+
+      save.and.callThrough();
+      await editor.save();
+      expect(buffer.getText()).toBe("foo\nbar\n\nbaz");
+    });
+
+    it("keeps trimming other buffers while a preserving save is pending", async () => {
+      let finishSave;
+      spyOn(editor, "save").and.returnValue(
+        new Promise((resolve) => {
+          finishSave = resolve;
+        }),
+      );
+      const preservingSave = lumine.commands.dispatch(
+        workspaceElement,
+        "whitespace:save-with-trailing-whitespace",
+      );
+
+      const otherEditor = await lumine.workspace.open("sample.txt");
+      otherEditor.setText("other   \n");
+      await otherEditor.save();
+      expect(otherEditor.getText()).toBe("other\n");
+
+      finishSave();
+      await preservingSave;
+    });
+
+    it("preserves whitespace until an untitled file finishes Save As", async () => {
+      const untitledEditor = await lumine.workspace.open();
+      untitledEditor.setText("untitled   \n");
+      const pane = lumine.workspace.getCenter().getActivePane();
+      spyOn(pane, "saveActiveItemAs").and.callFake(async () => {
+        await Promise.resolve();
+        await untitledEditor.saveAs(path.join(lumine.project.getPaths()[0], "untitled.txt"));
+      });
+
+      await lumine.commands.dispatch(workspaceElement, "whitespace:save-with-trailing-whitespace");
+      expect(untitledEditor.getText()).toBe("untitled   \n");
+      untitledEditor.setText("normal   \n");
+      await untitledEditor.save();
+      expect(untitledEditor.getText()).toBe("normal\n");
     });
   });
 
@@ -454,6 +503,13 @@ describe("Whitespace", () => {
   });
 
   describe("when the 'whitespace:convert-tabs-to-spaces' command is run", () => {
+    it("preserves every leading tab's indentation width", () => {
+      editor.setTabLength(3);
+      buffer.setText("\t\ta\n\t\t\tb\ninside\t\ttabs");
+      lumine.commands.dispatch(workspaceElement, "whitespace:convert-tabs-to-spaces");
+      expect(buffer.getText()).toBe("      a\n         b\ninside\t\ttabs");
+    });
+
     it("removes leading \\t characters and replaces them with spaces using the configured tab length", () => {
       editor.setTabLength(2);
       buffer.setText("\ta\n\t\nb\t\nc\t\td");
