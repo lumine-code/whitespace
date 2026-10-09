@@ -31,13 +31,13 @@ Commands available in `lumine-workspace`:
 
 To disable or enable features for a certain language, use syntax-scoped properties in your `config.json`. For example:
 
-```jsonc
+```json
 {
   ".slim.text": {
     "whitespace": {
-      "removeTrailingWhitespace": false,
-    },
-  },
+      "removeTrailingWhitespace": false
+    }
+  }
 }
 ```
 
