@@ -20,7 +20,9 @@ To install `whitespace` search for it in the Install pane of the Lumine settings
 
 Commands available in `lumine-workspace`:
 
-- `whitespace:remove-trailing-whitespace`: remove trailing whitespace from the active editor,
+Commands act on the editor they were dispatched from, falling back to the active editor for a workspace menu or command palette action.
+
+- `whitespace:remove-trailing-whitespace`: remove trailing whitespace from the editor,
 - `whitespace:save-with-trailing-whitespace`: save the editor without stripping trailing whitespace,
 - `whitespace:save-without-trailing-whitespace`: strip trailing whitespace and then save,
 - `whitespace:convert-tabs-to-spaces`: convert leading tabs to spaces,
