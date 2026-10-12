@@ -80,7 +80,7 @@ describe("Whitespace command editor ownership", () => {
       active.setText("active   \n");
       lumine.workspace.paneForItem(active).activate();
       const file = path.join(scratch, "untitled.txt");
-      spyOn(owner.applicationDelegate, "showSaveDialog").and.resolveTo({ filePath: file });
+      spyOn(owner.getContainer().getWindow(), "showSaveDialog").and.resolveTo({ filePath: file });
       await lumine.commands.dispatch(
         untitled.getElement(),
         "whitespace:save-with-trailing-whitespace",
