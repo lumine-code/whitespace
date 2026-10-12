@@ -379,7 +379,12 @@ describe("Whitespace", () => {
 
   describe("when the editor is split", () =>
     it("does not throw exceptions when the editor is saved after the split is closed (regression)", async () => {
-      lumine.workspace.getActivePane().splitRight({ copyActiveItem: true });
+      (
+        await lumine.workspace.copyPaneItem(lumine.workspace.getActivePane().getActiveItem(), {
+          sourcePane: lumine.workspace.getActivePane(),
+          splitDirection: "right",
+        })
+      ).pane;
       lumine.workspace.getPanes()[0].destroyItems();
 
       editor = lumine.workspace.getActivePaneItem();
