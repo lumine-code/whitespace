@@ -42,7 +42,9 @@
           "submenu": [
             {
               "label": "Remove Trailing Whitespace",
-              "command": "whitespace:remove-trailing-whitespace"
+              "command": "whitespace:remove-trailing-whitespace",
+              "group": "transform",
+              "order": 50
             }
           ]
         }
