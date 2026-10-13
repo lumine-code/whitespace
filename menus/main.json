@@ -33,6 +33,20 @@
           ]
         }
       ]
+    },
+    {
+      "label": "Edit",
+      "submenu": [
+        {
+          "label": "Text",
+          "submenu": [
+            {
+              "label": "Remove Trailing Whitespace",
+              "command": "whitespace:remove-trailing-whitespace"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
