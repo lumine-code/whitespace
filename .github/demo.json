@@ -1,0 +1,16 @@
+{
+  "title": "whitespace",
+  "description": "Convert tab indentation to spaces.",
+  "recordedOn": "2026-10-13",
+  "sourceRevision": "bb9f60b443b721f406de0b71cf82fba72b32242d",
+  "mode": "normal",
+  "fontSettings": "default",
+  "images": [
+    {
+      "file": "demo.png",
+      "label": "Convert tab indentation to spaces.",
+      "width": 1100,
+      "height": 340
+    }
+  ]
+}

@@ -12,6 +12,8 @@ Fork of [pulsar-edit/pulsar](https://github.com/pulsar-edit/pulsar) (`packages/w
 - **Markdown-aware**: optionally keeps the double-space line breaks Markdown relies on.
 - **Scoped settings**: enable or disable behavior per language through syntax-scoped properties.
 
+![Convert tab indentation to spaces.](.github/demo.png)
+
 ## Installation
 
 To install `whitespace` search for it in the Install pane of the Lumine settings, or run the command `lumine --install lumine-code/whitespace`.
