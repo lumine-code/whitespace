@@ -1,16 +1,61 @@
 {
   "title": "whitespace",
   "description": "Convert tab indentation to spaces.",
-  "recordedOn": "2026-10-13",
-  "sourceRevision": "bb9f60b443b721f406de0b71cf82fba72b32242d",
+  "recordedOn": "2026-10-14",
+  "sourceRevision": "338d5a96ba324d8771cc8026d8b9f4775dfb3be3",
+  "themeSourceRevision": "7fbd047a87ecf1367c896b19ff270cdc28d319f7",
   "mode": "normal",
   "fontSettings": "default",
+  "scenario": "demo.js",
+  "recipeHash": "8d3815190c9bf5b7f58b66a58f475dac08d13fd7979347dcf0bc69e52bdd037c",
+  "environment": {
+    "platform": "win32",
+    "arch": "x64",
+    "electron": "44.7.0",
+    "chrome": "152.0.7977.130",
+    "devicePixelRatio": 1,
+    "locale": "en-GB",
+    "fontFamily": "Fira Code, Menlo, DejaVu Sans Mono, Consolas, monospace",
+    "fontSize": 14,
+    "themes": ["one-day-syntax", "one-day-ui"]
+  },
+  "viewport": { "width": 1100, "height": 340 },
+  "cornerRadius": 10,
+  "sources": {
+    "editor": {
+      "revision": "8be8f86075ad93df038610d82b3ac6d99329957d",
+      "dirty": false,
+      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "package": {
+      "revision": "338d5a96ba324d8771cc8026d8b9f4775dfb3be3",
+      "dirty": false,
+      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "whitespace": {
+      "revision": "338d5a96ba324d8771cc8026d8b9f4775dfb3be3",
+      "dirty": false,
+      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "one-theme": {
+      "revision": "7fbd047a87ecf1367c896b19ff270cdc28d319f7",
+      "dirty": false,
+      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  },
+  "fixtures": [
+    {
+      "file": "usage/signal.js",
+      "sha256": "7d9b3f29d529c71db351df9bbdbf12b4b128ed10397f7b5f035fa67ba9340fee"
+    }
+  ],
   "images": [
     {
       "file": "demo.png",
       "label": "Convert tab indentation to spaces.",
       "width": 1100,
-      "height": 340
+      "height": 340,
+      "sha256": "a9fd1468be63dc3df967fb3be2659e97ad8559265143f161ecc1223bec25e999"
     }
   ]
 }
