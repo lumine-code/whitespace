@@ -11,7 +11,7 @@
               "command": "whitespace:remove-trailing-whitespace"
             },
             {
-              "label": "Save With Trailing Whitespace",
+              "label": "Save with Trailing Whitespace",
               "command": "whitespace:save-with-trailing-whitespace"
             },
             {
@@ -19,15 +19,15 @@
               "command": "whitespace:save-without-trailing-whitespace"
             },
             {
-              "label": "Convert Tabs To Spaces",
+              "label": "Convert Tabs to Spaces",
               "command": "whitespace:convert-tabs-to-spaces"
             },
             {
-              "label": "Convert Spaces To Tabs",
+              "label": "Convert Spaces to Tabs",
               "command": "whitespace:convert-spaces-to-tabs"
             },
             {
-              "label": "Convert All Tabs To Spaces",
+              "label": "Convert All Tabs to Spaces",
               "command": "whitespace:convert-all-tabs-to-spaces"
             }
           ]
