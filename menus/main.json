@@ -41,10 +41,13 @@
           "label": "Text",
           "submenu": [
             {
-              "label": "Remove Trailing Whitespace",
-              "command": "whitespace:remove-trailing-whitespace",
-              "group": "transform",
-              "order": 50
+              "label": "Whitespace",
+              "submenu": [
+                {
+                  "label": "Remove Trailing Whitespace",
+                  "command": "whitespace:remove-trailing-whitespace"
+                }
+              ]
             }
           ]
         }
