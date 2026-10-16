@@ -94,14 +94,20 @@ describe("Whitespace command editor ownership", () => {
     }
   });
 
-  it("retains active-editor fallback for a workspace menu dispatch", () => {
+  it("does not redirect a workspace dispatch into an editor", () => {
     active.setText("active   \n");
     target.setText("target   \n");
     lumine.commands.dispatch(
       lumine.workspace.getElement(),
       "whitespace:remove-trailing-whitespace",
     );
-    expect(active.getText()).toBe("active\n");
+    expect(
+      lumine.commands.canDispatch(
+        lumine.workspace.getElement(),
+        "whitespace:remove-trailing-whitespace",
+      ),
+    ).toBe(false);
+    expect(active.getText()).toBe("active   \n");
     expect(target.getText()).toBe("target   \n");
   });
 });

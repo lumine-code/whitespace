@@ -3,12 +3,11 @@ const fs = require("@lumine-code/fs-plus");
 const temp = require("@lumine-code/fs-temp");
 
 describe("Whitespace", () => {
-  let editor, buffer, workspaceElement;
+  let editor, buffer;
 
   beforeEach(async () => {
     const directory = temp.mkdirSync();
     lumine.project.setPaths([directory]);
-    workspaceElement = lumine.views.getView(lumine.workspace);
     const filePath = path.join(directory, "lumine-whitespace.txt");
     fs.writeFileSync(filePath, "");
     fs.writeFileSync(path.join(directory, "sample.txt"), "Some text.\n");
@@ -414,7 +413,7 @@ describe("Whitespace", () => {
     beforeEach(() => buffer.setText("foo   \nbar\t   \n\nbaz"));
 
     it("removes the trailing whitespace in the active editor", () => {
-      lumine.commands.dispatch(workspaceElement, "whitespace:remove-trailing-whitespace");
+      lumine.commands.dispatch(editor.getElement(), "whitespace:remove-trailing-whitespace");
       expect(buffer.getText()).toBe("foo\nbar\n\nbaz");
     });
 
@@ -434,7 +433,7 @@ describe("Whitespace", () => {
 
     it("saves the file without removing any trailing whitespace", async () => {
       const saved = new Promise((resolve) => buffer.onDidSave(resolve));
-      lumine.commands.dispatch(workspaceElement, "whitespace:save-with-trailing-whitespace");
+      lumine.commands.dispatch(editor.getElement(), "whitespace:save-with-trailing-whitespace");
       await saved;
 
       expect(buffer.getText()).toBe("foo   \nbar\t   \n\nbaz");
@@ -444,7 +443,7 @@ describe("Whitespace", () => {
     it("restores normal trimming after a failed save", async () => {
       const save = spyOn(editor, "save").and.rejectWith(new Error("Save failed"));
       await expectAsync(
-        lumine.commands.dispatch(workspaceElement, "whitespace:save-with-trailing-whitespace"),
+        lumine.commands.dispatch(editor.getElement(), "whitespace:save-with-trailing-whitespace"),
       ).toBeRejectedWithError("Save failed");
 
       save.and.callThrough();
@@ -460,7 +459,7 @@ describe("Whitespace", () => {
         }),
       );
       const preservingSave = lumine.commands.dispatch(
-        workspaceElement,
+        editor.getElement(),
         "whitespace:save-with-trailing-whitespace",
       );
 
@@ -482,7 +481,10 @@ describe("Whitespace", () => {
         await untitledEditor.saveAs(path.join(lumine.project.getPaths()[0], "untitled.txt"));
       });
 
-      await lumine.commands.dispatch(workspaceElement, "whitespace:save-with-trailing-whitespace");
+      await lumine.commands.dispatch(
+        untitledEditor.getElement(),
+        "whitespace:save-with-trailing-whitespace",
+      );
       expect(untitledEditor.getText()).toBe("untitled   \n");
       untitledEditor.setText("normal   \n");
       await untitledEditor.save();
@@ -499,7 +501,7 @@ describe("Whitespace", () => {
 
     it("saves the file and removes any trailing whitespace", async () => {
       const saved = new Promise((resolve) => buffer.onDidSave(resolve));
-      lumine.commands.dispatch(workspaceElement, "whitespace:save-without-trailing-whitespace");
+      lumine.commands.dispatch(editor.getElement(), "whitespace:save-without-trailing-whitespace");
       await saved;
 
       expect(buffer.getText()).toBe("foo\nbar\n\nbaz");
@@ -511,24 +513,24 @@ describe("Whitespace", () => {
     it("preserves every leading tab's indentation width", () => {
       editor.setTabLength(3);
       buffer.setText("\t\ta\n\t\t\tb\ninside\t\ttabs");
-      lumine.commands.dispatch(workspaceElement, "whitespace:convert-tabs-to-spaces");
+      lumine.commands.dispatch(editor.getElement(), "whitespace:convert-tabs-to-spaces");
       expect(buffer.getText()).toBe("      a\n         b\ninside\t\ttabs");
     });
 
     it("removes leading \\t characters and replaces them with spaces using the configured tab length", () => {
       editor.setTabLength(2);
       buffer.setText("\ta\n\t\nb\t\nc\t\td");
-      lumine.commands.dispatch(workspaceElement, "whitespace:convert-tabs-to-spaces");
+      lumine.commands.dispatch(editor.getElement(), "whitespace:convert-tabs-to-spaces");
       expect(buffer.getText()).toBe("  a\n  \nb\t\nc\t\td");
 
       editor.setTabLength(3);
       buffer.setText("\ta\n\t\nb\t\nc\t\td");
-      lumine.commands.dispatch(workspaceElement, "whitespace:convert-tabs-to-spaces");
+      lumine.commands.dispatch(editor.getElement(), "whitespace:convert-tabs-to-spaces");
       expect(buffer.getText()).toBe("   a\n   \nb\t\nc\t\td");
     });
 
     it("changes the tab type to soft tabs", () => {
-      lumine.commands.dispatch(workspaceElement, "whitespace:convert-tabs-to-spaces");
+      lumine.commands.dispatch(editor.getElement(), "whitespace:convert-tabs-to-spaces");
       expect(editor.getSoftTabs()).toBe(true);
     });
   });
@@ -537,31 +539,31 @@ describe("Whitespace", () => {
     it("removes leading space characters and replaces them with hard tabs", () => {
       editor.setTabLength(2);
       buffer.setText("   a\n  \nb  \nc    d");
-      lumine.commands.dispatch(workspaceElement, "whitespace:convert-spaces-to-tabs");
+      lumine.commands.dispatch(editor.getElement(), "whitespace:convert-spaces-to-tabs");
       expect(buffer.getText()).toBe("\t a\n\t\nb  \nc    d");
 
       editor.setTabLength(3);
       buffer.setText("     a\n   \nb   \nc      d");
-      lumine.commands.dispatch(workspaceElement, "whitespace:convert-spaces-to-tabs");
+      lumine.commands.dispatch(editor.getElement(), "whitespace:convert-spaces-to-tabs");
       expect(buffer.getText()).toBe("\t  a\n\t\nb   \nc      d");
     });
 
     it("handles mixed runs of tabs and spaces correctly", () => {
       editor.setTabLength(4);
       buffer.setText("     \t    \t\ta   ");
-      lumine.commands.dispatch(workspaceElement, "whitespace:convert-spaces-to-tabs");
+      lumine.commands.dispatch(editor.getElement(), "whitespace:convert-spaces-to-tabs");
       expect(buffer.getText()).toBe("\t\t\t\t\ta   ");
     });
 
     it("changes the tab type to hard tabs", () => {
-      lumine.commands.dispatch(workspaceElement, "whitespace:convert-spaces-to-tabs");
+      lumine.commands.dispatch(editor.getElement(), "whitespace:convert-spaces-to-tabs");
       expect(editor.getSoftTabs()).toBe(false);
     });
 
     it("changes the tab length to user's tab-size", () => {
       editor.setTabLength(4);
       buffer.setText("    ");
-      lumine.commands.dispatch(workspaceElement, "whitespace:convert-spaces-to-tabs");
+      lumine.commands.dispatch(editor.getElement(), "whitespace:convert-spaces-to-tabs");
       expect(editor.getTabLength()).toBe(2);
     });
   });
@@ -570,17 +572,17 @@ describe("Whitespace", () => {
     it("removes all \\t characters and replaces them with spaces using the configured tab length", () => {
       editor.setTabLength(2);
       buffer.setText("\ta\n\t\nb\t\nc\t\td");
-      lumine.commands.dispatch(workspaceElement, "whitespace:convert-all-tabs-to-spaces");
+      lumine.commands.dispatch(editor.getElement(), "whitespace:convert-all-tabs-to-spaces");
       expect(buffer.getText()).toBe("  a\n  \nb  \nc    d");
 
       editor.setTabLength(3);
       buffer.setText("\ta\n\t\nb\t\nc\t\td");
-      lumine.commands.dispatch(workspaceElement, "whitespace:convert-all-tabs-to-spaces");
+      lumine.commands.dispatch(editor.getElement(), "whitespace:convert-all-tabs-to-spaces");
       expect(buffer.getText()).toBe("   a\n   \nb   \nc      d");
     });
 
     it("changes the tab type to soft tabs", () => {
-      lumine.commands.dispatch(workspaceElement, "whitespace:convert-all-tabs-to-spaces");
+      lumine.commands.dispatch(editor.getElement(), "whitespace:convert-all-tabs-to-spaces");
       expect(editor.getSoftTabs()).toBe(true);
     });
   });

@@ -20,9 +20,9 @@ To install `whitespace` search for it in the Install pane of the Lumine settings
 
 ## Commands
 
-Commands available in `lumine-workspace`:
+Commands available in `lumine-text-editor:not([mini]):not([readonly])`:
 
-Commands act on the editor they were dispatched from, falling back to the active editor for a workspace menu or command palette action.
+Commands act on the editor they were dispatched from. Application-menu and command-palette actions use the focus captured before opening and remain unavailable on other surfaces.
 
 - `whitespace:remove-trailing-whitespace`: remove trailing whitespace from the editor,
 - `whitespace:save-with-trailing-whitespace`: save the editor without stripping trailing whitespace,
