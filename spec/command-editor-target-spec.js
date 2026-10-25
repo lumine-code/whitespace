@@ -3,6 +3,11 @@ const os = require("node:os");
 const path = require("node:path");
 
 describe("Whitespace command editor ownership", () => {
+  // Processing fixtures use a real grammar; None deliberately disables this package.
+  beforeEach(async () => {
+    await lumine.packages.activatePackage("language-text");
+  });
+
   let active, target, scratch, temporary;
   beforeEach(async () => {
     jasmine.useRealClock();

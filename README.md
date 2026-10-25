@@ -33,6 +33,8 @@ Commands act on the editor they were dispatched from. Application-menu and comma
 
 ## Configuration
 
+Automatic cleanup is suspended when the editor's grammar is **None**, so saving a large file preserves its text without scanning it. Explicit whitespace commands remain available. Selecting a grammar resumes automatic cleanup.
+
 To disable or enable features for a certain language, use syntax-scoped properties in your `config.json`. For example:
 
 ```json

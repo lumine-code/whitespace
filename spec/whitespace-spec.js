@@ -3,6 +3,11 @@ const fs = require("@lumine-code/fs-plus");
 const temp = require("@lumine-code/fs-temp");
 
 describe("Whitespace", () => {
+  // Processing fixtures use a real grammar; None deliberately disables this package.
+  beforeEach(async () => {
+    await lumine.packages.activatePackage("language-text");
+  });
+
   let editor, buffer;
 
   beforeEach(async () => {
