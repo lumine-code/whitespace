@@ -99,13 +99,43 @@ describe("whitespace in large documents", () => {
   });
 
   it("waits for large save cleanup and groups it into one undo", async () => {
-    editor.setText(prefix + "word \n\n");
+    editor.setText(prefix + "first \nword \n\n");
+    editor.setCursorBufferPosition([2, 2]);
     buffer.clearUndoStack();
     const before = buffer.getTextSnapshot();
+    const seen = [];
+    const layer = buffer.addMarkerLayer({
+      trackRanges(entries) {
+        seen.push(buffer.getTextSnapshot().slice(prefix.length));
+        return entries.map(({ id }) => ({ id, range: buffer.getRange() }));
+      },
+    });
+    layer.markRange(buffer.getRange(), { invalidate: "never" });
     await whitespace.prepareLargeSave(editor);
-    expect(buffer.getTextSnapshot().slice(prefix.length)).toBe("word\n");
+    expect(buffer.getTextSnapshot().slice(prefix.length)).toBe("first\nword\n");
+    expect(seen.slice(0, 2)).toEqual(["first\nword \n\n", "first\nword\n\n"]);
+    expect(editor.getCursorBufferPosition()).toEqual([2, 2]);
     editor.undo();
     expect(buffer.getTextSnapshot().equals(before)).toBeTrue();
+  });
+
+  it("keeps intervening edits separate from large save cleanup history", async () => {
+    editor.setText(prefix + "first \nword \n\n");
+    buffer.clearUndoStack();
+    const replace = buffer.replaceAllMatches;
+    spyOn(buffer, "replaceAllMatches").and.callFake(async function (...args) {
+      const count = await replace.apply(this, args);
+      buffer.insert([1, 0], "typed ");
+      return count;
+    });
+
+    await whitespace.prepareLargeSave(editor);
+
+    expect(buffer.getTextSnapshot().slice(prefix.length)).toBe("typed first\nword\n");
+    editor.undo();
+    expect(buffer.getTextSnapshot().slice(prefix.length)).toBe("typed first\nword\n\n");
+    editor.undo();
+    expect(buffer.getTextSnapshot().slice(prefix.length)).toBe("first\nword\n\n");
   });
 
   it("cancels pending formatting on deactivation without changing text", async () => {
