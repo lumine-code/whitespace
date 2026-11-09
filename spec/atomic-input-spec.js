@@ -25,14 +25,14 @@ describe("Whitespace during atomic input", () => {
       editor.getBuffer().clearUndoStack();
       const changes = [];
       editor.getBuffer().onDidApplyChanges(() => changes.push(editor.getText()));
-      const scan = spyOn(
-        editor.getBuffer().getLanguageMode(),
-        "scanPreparedIndentation",
-      ).and.callThrough();
+      const mode = editor.getBuffer().getLanguageMode();
+      const input = spyOn(mode, "prepareInputIndentation").and.callThrough();
+      const scan = spyOn(mode, "scanPreparedIndentation").and.callThrough();
       for (let i = 0; i < 8; i++) await editor.insertNewline();
       expect(changes.length).toBe(8);
       expect(changes.every((text) => text.endsWith(ending + "    "))).toBe(true);
       expect(editor.getText()).toBe("class Record:" + ending.repeat(9) + "    ");
+      expect(input).not.toHaveBeenCalled();
       expect(scan).not.toHaveBeenCalled();
       for (let i = 0; i < 8; i++) editor.undo();
       expect(editor.getText()).toBe(original);
